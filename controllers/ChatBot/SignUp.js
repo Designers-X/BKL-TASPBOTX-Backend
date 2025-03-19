@@ -58,6 +58,7 @@ const loginApi = async (req, res) => {
 const verifyOtpApi = async (req, res) => {
   try {
     const { email, otp } = req.body;
+    console.log(email,otp)
     if (!email || !otp) {
       return res.status(400).json({ error: "Email and OTP are required." });
     }
