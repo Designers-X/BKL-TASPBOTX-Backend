@@ -84,7 +84,7 @@ const verifyOtpApi = async (req, res) => {
     );
 
     const updateQuery =
-      "UPDATE users SET otp = NULL, session_id = ?, token = ? WHERE email = ?";
+      "UPDATE users SET otp = '', session_id = ?, token = ? WHERE email = ?";
     await db.execute(updateQuery, [sessionId, token, email]);
 
     return res.status(200).json({
