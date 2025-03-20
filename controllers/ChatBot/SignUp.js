@@ -36,11 +36,14 @@ const loginApi = async (req, res) => {
     if (!email) {
       return res.status(400).json({ error: "Email is required." });
     }
-    const findUserQuery = "SELECT id FROM users WHERE email = ?";
+    // Retrieve user id and name based on the provided email
+    const findUserQuery = "SELECT id, name FROM users WHERE email = ?";
     const [rows] = await db.execute(findUserQuery, [email]);
     if (rows.length === 0) {
       return res.status(404).json({ error: "User not found." });
     }
+
+    const user = rows[0];
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const updateOtpQuery = "UPDATE users SET otp = ? WHERE email = ?";
     await db.execute(updateOtpQuery, [otp, email]);
@@ -49,6 +52,7 @@ const loginApi = async (req, res) => {
       status: true,
       message: "OTP sent to your email.",
       email: email,
+      name:user.name
     });
   } catch (error) {
     console.error("Error during login:", error);
