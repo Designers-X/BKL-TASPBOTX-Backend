@@ -48,6 +48,7 @@ const loginApi = async (req, res) => {
     return res.status(200).json({
       status: true,
       message: "OTP sent to your email.",
+      email: email,
     });
   } catch (error) {
     console.error("Error during login:", error);
@@ -58,7 +59,7 @@ const loginApi = async (req, res) => {
 const verifyOtpApi = async (req, res) => {
   try {
     const { email, otp } = req.body;
-    console.log(email,otp)
+    console.log(email, otp);
     if (!email || !otp) {
       return res.status(400).json({ error: "Email and OTP are required." });
     }
@@ -99,4 +100,33 @@ const verifyOtpApi = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-module.exports = { signUpApi, loginApi, verifyOtpApi };
+// resend OTP api
+const resendOtpApi = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Email is required." });
+    }
+    const findUserQuery = "SELECT id FROM users WHERE email = ?";
+    const [rows] = await db.execute(findUserQuery, [email]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const updateOtpQuery = "UPDATE users SET otp = ? WHERE email = ?";
+    await db.execute(updateOtpQuery, [otp, email]);
+
+    await sendOTP(email, otp);
+
+    return res.status(200).json({
+      status: true,
+      message: "OTP re-sent to your email.",
+    });
+  } catch (error) {
+    console.error("Error resending OTP:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+module.exports = { signUpApi, loginApi, verifyOtpApi, resendOtpApi };
