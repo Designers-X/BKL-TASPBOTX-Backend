@@ -1,5 +1,5 @@
 // db/Connection.js
-const mysql = require('mysql2/promise');
+const mysql = require("mysql2/promise");
 
 const pool = mysql.createPool({
   host: 'localhost',

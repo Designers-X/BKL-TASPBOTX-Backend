@@ -5,6 +5,7 @@ const { loginApi } = require("../controllers/ChatBot/SignUp");
 const {verifyOtpApi}=require("../controllers/ChatBot/SignUp");
 const {resendOtpApi}=require("../controllers/ChatBot/SignUp");
 const {loginAdminApi}=require("../controllers/Admin/Login");
+const {chatHistory,getChatHistory,deleteChatHistory}=require("../controllers/ChatBot/chatHistory")
 // const {loginAdminApi}=require("../controllers/Admin/Login")
 const { requestOtpApi, verifyadminOtpApi, resetPasswordApi } = require("../controllers/Admin/ForgotPassword");
 const { signupAdminApi } = require("../controllers/Admin/Signup");
@@ -20,9 +21,12 @@ router.post("/admin/request-otp", requestOtpApi);
 router.post("/admin/verify-otp", verifyadminOtpApi);    
 router.post("/admin/reset-password", resetPasswordApi);
 router.get("/user/:userId", getUserInfoApi); 
+router.post("/chat_history",chatHistory);
+router.get("/get_chat_history", getChatHistory);
 router.put("/user/update/:userId", updateUserApi); 
 router.get("/users", getAllUsers); 
 router.delete("/user/delete/:userId", deleteUserApi); 
+router.delete("/delete-chat-history",deleteChatHistory)
 module.exports = router;
 
 
