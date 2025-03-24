@@ -24,7 +24,6 @@ const chatHistory = async (req, res) => {
 const getChatHistory = async (req, res) => {
   try {
     const { userId } = req.query;
-
     if (!userId) {
       return res.status(400).json({ error: "userId is required" });
     }
