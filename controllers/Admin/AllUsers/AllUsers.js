@@ -3,9 +3,18 @@ const db = require("../../../db/Connection");
 // Get all users with role = NULL
 const getAllUsers = async (req, res) => {
   try {
-    const query = "SELECT id, name, email, profile_pic FROM users WHERE role IS NULL";
+    // const query = "SELECT id, name, email, profile_pic FROM users WHERE role IS NULL";
+    const query = `
+    SELECT 
+      u.id, 
+      u.name, 
+      u.email, 
+      u.profile_pic,
+      (SELECT ch.createdAt FROM chat_history ch WHERE ch.userId = u.id ORDER BY ch.createdAt DESC LIMIT 1) AS last_message_time
+    FROM users u
+    WHERE u.role IS NULL
+  `;
     const [rows] = await db.execute(query);
-
     return res.status(200).json({ status: true, users: rows });
   } catch (error) {
     console.error("Error fetching users:", error);
