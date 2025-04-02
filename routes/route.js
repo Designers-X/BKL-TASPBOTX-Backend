@@ -11,7 +11,6 @@ const {
   getChatHistory,
   deleteChatHistory,
 } = require("../controllers/ChatBot/chatHistory");
-// const {loginAdminApi}=require("../controllers/Admin/Login")
 const {
   requestOtpApi,
   verifyadminOtpApi,
@@ -42,7 +41,5 @@ router.put("/user/update/:userId", updateUserApi);
 router.get("/users", getAllUsers);
 router.delete("/user/delete/:userId", deleteUserApi);
 router.delete("/delete-chat-history", deleteChatHistory);
-// router.get("/get-chat-limit-history",getLatestTwoMessages);
-// router.get("/latest-chat-history",getMessagesExcludingLatestTwo);
 router.get("/get-chat-2", getChatHistory2);
 module.exports = router;

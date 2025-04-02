@@ -2,10 +2,7 @@ const db = require("../../db/Connection");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 require("dotenv").config();
-
-const BASE_URL = "http://localhost:5000/uploads/"; // Base URL for image access
-
-// Multer Configuration for File Uploads
+const BASE_URL = `${process.env.backend_url}/uploads/`; 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/"); 
@@ -15,9 +12,7 @@ const storage = multer.diskStorage({
     cb(null, uniqueSuffix + "-" + file.originalname);
   },
 });
-
 const upload = multer({ storage: storage }).single("profilePic");
-
 // Signup API for Admin
 const signupAdminApi = async (req, res) => {
   upload(req, res, async (err) => {
@@ -25,26 +20,19 @@ const signupAdminApi = async (req, res) => {
       if (err) {
         return res.status(400).json({ error: "Error uploading file." });
       }
-
       const { name, email, password } = req.body;
       let profilePic = req.file ? req.file.filename : null;
 
       if (!name || !email || !password) {
         return res.status(400).json({ error: "All fields are required." });
       }
-
-      // Check if email already exists
       const checkQuery = "SELECT id FROM users WHERE email = ?";
       const [existingUser] = await db.execute(checkQuery, [email]);
 
       if (existingUser.length > 0) {
         return res.status(400).json({ error: "Email already in use." });
       }
-
-      // Default role: Admin
       const role = 1;
-
-      // Store only the filename in the database
       const insertQuery =
         "INSERT INTO users (name, email, password, profile_pic, role) VALUES (?, ?, ?, ?, ?)";
       const [result] = await db.execute(insertQuery, [
@@ -54,8 +42,6 @@ const signupAdminApi = async (req, res) => {
         profilePic,
         role,
       ]);
-
-      // Generate JWT Token
       const token = jwt.sign({ id: result.insertId, email }, process.env.JWT_SECRET, {
         expiresIn: "1h",
       });
@@ -65,7 +51,7 @@ const signupAdminApi = async (req, res) => {
         message: "Signup successful.",
         userId: result.insertId,
         token,
-        profilePic: profilePic ? `${BASE_URL}${profilePic}` : null, // Return full image URL
+        profilePic: profilePic ? `${BASE_URL}${profilePic}` : null,
       });
     } catch (error) {
       console.error("Error during admin signup:", error);
@@ -73,5 +59,4 @@ const signupAdminApi = async (req, res) => {
     }
   });
 };
-
 module.exports = { signupAdminApi };

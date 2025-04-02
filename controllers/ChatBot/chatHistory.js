@@ -35,7 +35,7 @@ const getChatHistory = async (req, res) => {
     return res.status(200).json({ success: true, chatHistory: results });
   } catch (error) {
     console.error("getChatHistory API error:", error);
-    return res.status(500).json({ error: "Internal Server Error"});
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 // delete chat history api
@@ -60,39 +60,39 @@ const deleteChatHistory = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-const getChatHistory2 =async (req, res) => {
+const getChatHistory2 = async (req, res) => {
   try {
-        const { userId, limit, offset } = req.query;
-        const messageLimit = parseInt(limit, 10) || 10; // Default to 2 if not provided
-        const messageOffset = parseInt(offset, 10) || 0; // Default to 0 if not provided
-    
-        if (!userId) {
-          return res.status(400).json({ error: "userId is required" });
-        }
-    
-        // Query to fetch messages in descending order, excluding the latest 2 messages
-        const sql = `
+    const { userId, limit, offset } = req.query;
+    const messageLimit = parseInt(limit, 10) || 10;
+    const messageOffset = parseInt(offset, 10) || 0;
+
+    if (!userId) {
+      return res.status(400).json({ error: "userId is required" });
+    }
+    const sql = `
           SELECT * FROM chat_history 
           WHERE userId = ? 
           ORDER BY createdAt DESC 
           LIMIT ? OFFSET ?
         `;
-    
-        const [results] = await db.query(sql, [userId, messageLimit, messageOffset]);
-    
-        if (results.length === 0) {
-          return res.status(404).json({ error: "No more messages found" });
-        }
-    
-        return res.status(200).json({ success: true, chatHistory: results });
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-        return res.status(500).json({ error: "Internal Server Error" });
-      }
+    const [results] = await db.query(sql, [
+      userId,
+      messageLimit,
+      messageOffset,
+    ]);
+    if (results.length === 0) {
+      return res.status(404).json({ error: "No more messages found" });
+    }
+
+    return res.status(200).json({ success: true, chatHistory: results });
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 module.exports = {
   chatHistory,
   getChatHistory,
   deleteChatHistory,
-  getChatHistory2 
+  getChatHistory2,
 };

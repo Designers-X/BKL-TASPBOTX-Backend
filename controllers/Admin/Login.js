@@ -10,7 +10,6 @@ const loginAdminApi = async (req, res) => {
         .status(400)
         .json({ error: "Email and password are required." });
     }
-
     const query =
       "SELECT id, password, role FROM users WHERE email = ? AND role = 1";
     const [rows] = await db.execute(query, [email]);
@@ -18,7 +17,6 @@ const loginAdminApi = async (req, res) => {
     if (rows.length === 0) {
       return res.status(404).json({ error: "Admin user not found." });
     }
-
     const user = rows[0];
     if (user.password !== password) {
       return res.status(401).json({ error: "Invalid password." });
@@ -26,10 +24,8 @@ const loginAdminApi = async (req, res) => {
     const token = jwt.sign({ id: user.id, email }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-
     const updateQuery = "UPDATE users SET  token = ? WHERE email = ?";
     await db.execute(updateQuery, [token, email]);
-
     return res.status(200).json({
       status: true,
       message: "Login successful.",

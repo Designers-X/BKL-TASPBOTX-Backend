@@ -1,4 +1,3 @@
-// db/Connection.js
 const mysql = require("mysql2/promise");
 const pool = mysql.createPool({
   host: "localhost",
@@ -13,7 +12,7 @@ const pool = mysql.createPool({
   try {
     const connection = await pool.getConnection();
     console.log("✅ Database connected successfully!");
-    connection.release(); // Release the connection back to the pool
+    connection.release(); 
   } catch (error) {
     console.error("❌ Database connection failed:", error.message);
   }

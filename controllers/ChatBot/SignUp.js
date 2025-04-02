@@ -7,8 +7,6 @@ require("dotenv").config();
 const signUpApi = async (req, res) => {
   try {
     const { name, email } = req.body;
-
-    // Validate required fields
     if (!name || !email) {
       return res
         .status(400)
@@ -36,13 +34,11 @@ const loginApi = async (req, res) => {
     if (!email) {
       return res.status(400).json({ error: "Email is required." });
     }
-    // Retrieve user id and name based on the provided email
     const findUserQuery = "SELECT id, name FROM users WHERE email = ?";
     const [rows] = await db.execute(findUserQuery, [email]);
     if (rows.length === 0) {
       return res.status(404).json({ error: "User not found." });
     }
-
     const user = rows[0];
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const updateOtpQuery = "UPDATE users SET otp = ? WHERE email = ?";
@@ -69,17 +65,14 @@ const verifyOtpApi = async (req, res) => {
     }
     const findUserQuery = "SELECT id, otp FROM users WHERE email = ?";
     const [rows] = await db.execute(findUserQuery, [email]);
-
     if (rows.length === 0) {
       return res.status(404).json({ error: "User not found." });
     }
-
     const user = rows[0];
     if (user.otp !== otp) {
       return res.status(401).json({ error: "Invalid OTP." });
     }
     const sessionId = uuidv4();
-
     const token = jwt.sign(
       { id: user.id, email, sessionId },
       process.env.JWT_SECRET,
@@ -87,7 +80,6 @@ const verifyOtpApi = async (req, res) => {
         expiresIn: "1h",
       }
     );
-
     const updateQuery =
       "UPDATE users SET otp = '', session_id = ?, token = ? WHERE email = ?";
     await db.execute(updateQuery, [sessionId, token, email]);
@@ -116,14 +108,10 @@ const resendOtpApi = async (req, res) => {
     if (rows.length === 0) {
       return res.status(404).json({ error: "User not found." });
     }
-
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
     const updateOtpQuery = "UPDATE users SET otp = ? WHERE email = ?";
     await db.execute(updateOtpQuery, [otp, email]);
-
     await sendOTP(email, otp);
-
     return res.status(200).json({
       status: true,
       message: "OTP re-sent to your email.",
