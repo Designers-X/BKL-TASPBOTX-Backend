@@ -63,7 +63,7 @@ const deleteChatHistory = async (req, res) => {
 const getChatHistory2 =async (req, res) => {
   try {
         const { userId, limit, offset } = req.query;
-        const messageLimit = parseInt(limit, 2) || 2; // Default to 2 if not provided
+        const messageLimit = parseInt(limit, 10) || 10; // Default to 2 if not provided
         const messageOffset = parseInt(offset, 10) || 0; // Default to 0 if not provided
     
         if (!userId) {
