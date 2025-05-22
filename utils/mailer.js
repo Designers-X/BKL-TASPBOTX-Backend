@@ -114,8 +114,7 @@ async function sendOTP(toEmail, otp) {
     </html>
   `,
     text_body: `Your one-time verification code is: ${otp}. Do not share this code with anyone.`,
-  };
-
+  }
   try {
     const response = await axios.post(
       "https://api.smtp2go.com/v3/email/send",
