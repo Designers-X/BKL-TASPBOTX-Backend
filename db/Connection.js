@@ -3,7 +3,7 @@ const pool = mysql.createPool({
   host: "localhost",
   user: "root",
   password: "",
-  database: "tasp_database",
+  database: "test_data",
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
